@@ -1,0 +1,18 @@
+{
+  "name": "timeweb-ai",
+  "version": "1.0.0",
+  "description": "Timeweb AI integration for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "esbuild main.ts --bundle --outfile=dist/main.js --format=cjs --platform=node --watch --external:obsidian",
+    "build": "esbuild main.ts --bundle --minify --outfile=dist/main.js --format=cjs --platform=node --external:obsidian"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "obsidian": "latest",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

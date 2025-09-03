@@ -1,0 +1,9 @@
+{
+  "id": "timeweb-ai",
+  "name": "Timeweb AI",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "author": "viknsagit",
+  "description": "Интеграция с AI-агентами Timeweb. Можно выделить текст и применить к нему инструкцию.",
+  "isDesktopOnly": false
+}
