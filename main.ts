@@ -116,8 +116,8 @@ export default class TimewebPlugin extends Plugin {
 
         const message = `Инструкция: ${instruction}\n\nТекст:\n${textToSend}`;
 
-        // Уведомление "Генерация..."
-        const generationNotice = new Notice("⏳ Генерация...");
+        // Уведомление "Генерация..." (висит, пока не будет скрыто вручную)
+        const generationNotice = new Notice("⏳ Генерация...", 0);
 
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 30000); // 30 секунд
