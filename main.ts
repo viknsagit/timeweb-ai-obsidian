@@ -1,5 +1,4 @@
-import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, Modal } from "obsidian";
-import fetch from "node-fetch";
+import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, Modal, requestUrl } from "obsidian";
 
 interface TimewebPluginSettings {
   token: string;
@@ -23,20 +22,17 @@ class InstructionModal extends Modal {
 
   onOpen() {
     const { contentEl } = this;
+    
+    // Добавляем CSS класс для стилизации
+    contentEl.addClass("timeweb-instruction-modal");
 
     contentEl.createEl("h3", { text: "Введите текст или инструкцию" });
 
     const textarea = contentEl.createEl("textarea");
-    textarea.style.width = "100%";
-    textarea.style.height = "100px";
-    textarea.style.marginBottom = "10px";
     textarea.placeholder = this.placeholder;
     textarea.focus();
 
-    const buttonContainer = contentEl.createDiv();
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.justifyContent = "flex-end";
-    buttonContainer.style.gap = "10px";
+    const buttonContainer = contentEl.createDiv({ cls: "button-container" });
 
     const cancelBtn = buttonContainer.createEl("button", { text: "Отмена" });
     cancelBtn.onclick = () => {
@@ -119,30 +115,25 @@ export default class TimewebPlugin extends Plugin {
         // Уведомление "Генерация..." (висит, пока не будет скрыто вручную)
         const generationNotice = new Notice("⏳ Генерация...", 0);
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 30000); // 30 секунд
-
         try {
-          const response = await fetch(
-            `https://api.timeweb.cloud/api/v1/cloud-ai/agents/${this.settings.agentId}/call`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${this.settings.token}`,
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ message }),
-              signal: controller.signal
-            }
-          );
+          const response = await requestUrl({
+            url: `https://api.timeweb.cloud/api/v1/cloud-ai/agents/${this.settings.agentId}/call`,
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${this.settings.token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message }),
+            throw: false
+          });
 
-          if (!response.ok) {
+          if (response.status !== 200) {
             generationNotice.hide();
             new Notice(`❌ Ошибка API: ${response.status}`);
             return;
           }
 
-          const data = await response.json();
+          const data = response.json;
           const reply = data?.message ?? "❌ Нет ответа";
 
           // Вставка ответа в сохранённое место
@@ -155,8 +146,6 @@ export default class TimewebPlugin extends Plugin {
           console.error(err);
           generationNotice.hide();
           new Notice("❌ Ошибка запроса или таймаут (30 секунд)");
-        } finally {
-          clearTimeout(timeout);
         }
       }
     });

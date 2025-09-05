@@ -1,1 +1,14 @@
-/* Минимальные стили (можно пустым оставить) */
+/* Стили для модального окна Timeweb AI */
+
+.timeweb-instruction-modal textarea {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+
+.timeweb-instruction-modal .button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
